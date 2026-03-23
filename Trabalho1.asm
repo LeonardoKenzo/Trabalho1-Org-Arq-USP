@@ -74,13 +74,13 @@ add_final:
 	sw zero, 8(t0) #coloca NULL noo ponteiro do vagao
 	
 	#percorrer todo o trem ate o ultimo vagao
-	add t2, s1, -1 
+	addi t2, s1, -1 
 	add s2, zero, s0
 find_last_wagon:
 	beq t2, zero, last_wagon
 	add t3, zero, s2
 	lw s2, 8(t3) #ponteiro para o ultimo vagao
-	add t2, t2, -1 #decrementa o contador
+	addi t2, t2, -1 #decrementa o contador
 	j find_last_wagon #loop para percorrer o trem
 last_wagon: 
 	sw t0, 8(s2) #o ultimo vagao aponta para o novo vagao
@@ -93,26 +93,27 @@ list_train:
 	add t1, zero, s0 # t1 comeca apontando para o primeiro vagão
     
 list_loop:
-    beq t1, zero, menu_options # se t1 for NULL, o trem acabou e voltamos ao menus
+    	beq t1, zero, menu_options # se t1 for NULL, o trem acabou e voltamos ao menus
     
-    lw a0, 0(t1) # carrega o ID (offset 0)
-    addi a7, zero, 1 # 1 imprime int
-    ecall
+    	lw a0, 0(t1) # carrega o ID (offset 0)
+    	addi a7, zero, 1 # 1 imprime int
+    	ecall
     
-    addi a0, zero, 32 #ASCII para espaco
-    addi a7, zero, 11 # 11 imprime char
-    ecall
+    	addi a0, zero, 32 #ASCII para espaco
+    	addi a7, zero, 11 # 11 imprime char
+    	ecall
     
-    lbu a0, 4(t1) # carrega o caractere (offset 4)
-    addi a7, zero, 11 # 11 imprime char
-    ecall
+    	lbu a0, 4(t1) # carrega o caractere (offset 4)
+    	addi a7, zero, 11 # 11 imprime char
+    	ecall
     
-    addi a0, zero, 10       # ASCII 10 é o \n
-    addi a7, zero, 11
-    ecall
+    	addi a0, zero, 10       # ASCII 10 é o \n
+    	addi a7, zero, 11
+    	ecall
     
-    lw t1, 8(t1) # recebe o endereço do proximo vagao (offset 8)
-    j list_loop
+    	lw t1, 8(t1) # recebe o endereço do proximo vagao (offset 8)
+    	j list_loop
+    	
 search_wagon:
 
 exit:
