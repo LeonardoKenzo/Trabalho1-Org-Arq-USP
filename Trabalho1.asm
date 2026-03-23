@@ -7,6 +7,8 @@ first_wagon: #primeiro vagao locomotiva (12 bits)
 	.word 0 #ponteiro para o proximo vagao (0 = NULL) - offset 8
 	
 not_found: .asciz "\nVagao nao encontrado no trem.\n"
+menu_msg:  .asciz "\n1 - Add inicio\n2 - Add final\n3 - Remover\n4 - Listar\n5 - Buscar\n6 - Sair\nOpcao: "
+welcome:   .asciz "Bem-vindo ao sistema de trens!\n"
 
 	.text
 	.align 2
@@ -14,8 +16,17 @@ not_found: .asciz "\nVagao nao encontrado no trem.\n"
 main:		
 	la s0, first_wagon #endereco do primeiro vagao(s0)
 	addi s1, zero, 1 #contador de vagoes do trem (s1)
+
+	la a0, welcome # mensagem de boas-vindas
+	addi a7, zero, 4
+	ecall
 	
 menu_options: #loop para o usuario escolher os comandos
+
+	la a0, menu_msg # imprime menu
+	addi a7, zero, 4
+	ecall
+
 	addi a7, zero, 5 #le o input para selecionar o comando
 	ecall
 	add t1, zero, a0 #comando selecionado(t1)
@@ -37,7 +48,7 @@ menu_options: #loop para o usuario escolher os comandos
 	j menu_options #se nao colocou a opcao de sair(6), volta ao menu de comandos
 	
 add_start:
-	add s2, zero, s0 #usa o registrador s2 como endereço do primeiro vagao
+	add s2, zero, s0 #usa o registrador s2 como endereÃ§o do primeiro vagao
 	
 	addi a7, zero, 9 #alocar 12 bits de memoria para cada novo vagao (dinamico)
 	addi a0, zero, 12
@@ -90,9 +101,37 @@ last_wagon:
 	j menu_options #volta para o menu de comandos
 	
 rem_wagon:
+	addi a7, zero, 5 #le o ID do vagao que o usuario deseja remover
+	ecall
+	add t1, zero, a0          #t1 armazena o ID do vagão que vai ser removido
+
+	lw t0, 0(s0)              #t0 = ID do primeiro vagao
+	beq t1, t0, remove_not_found #nao pode remover o primeiro no (locomotiva)
+
+	add t2, zero, s0          #representa o vagão anterior(primeiro vagao)
+	lw t3, 8(s0)              #representa o vagão atual(segundo vagao)
+
+remove_loop:
+	beq t3, zero, remove_not_found #se chegou no fim da lista e nao encontrou
+	lw t4, 0(t3) #carrega o ID do vagao atual
+	beq t4, t1, remove_found 	#se encontrou o ID, remove
+	add t2, zero, t3          #anterior = atual
+	lw t3, 8(t3)              #atual = proximo
+	j remove_loop
+
+remove_found:
+	lw t5, 8(t3)  #t5 = proximo do vagao atual
+	sw t5, 8(t2) #faz o vagao anterior apontar para o proximo do atual
+	j menu_options
+
+remove_not_found:
+	la a0, not_found #so printa que não foi encontrado
+	addi a7, zero, 4
+	ecall
+	j menu_options
 
 list_train:
-	add t1, zero, s0 # t1 comeca apontando para o primeiro vagão
+	add t1, zero, s0 # t1 comeca apontando para o primeiro vagÃ£o
     
 list_loop:
     	beq t1, zero, menu_options # se t1 for NULL, o trem acabou e voltamos ao menus
@@ -109,11 +148,11 @@ list_loop:
     	addi a7, zero, 11 # 11 imprime char
     	ecall
     
-    	addi a0, zero, 10       # ASCII 10 é o \n
+    	addi a0, zero, 10       # ASCII 10 Ã© o \n
     	addi a7, zero, 11
     	ecall
     
-    	lw t1, 8(t1) # recebe o endereço do proximo vagao (offset 8)
+    	lw t1, 8(t1) # recebe o endereÃ§o do proximo vagao (offset 8)
     	j list_loop
 
 search_wagon:
@@ -121,15 +160,15 @@ search_wagon:
 	ecall
 	add t1, zero, a0 # Guaarda o ID que vamos procurar
 	
-	add t2, zero, s0 # Come�ar do primeiro vagao
+	add t2, zero, s0 # Começar do primeiro vagao
 	
 search_loop:
 	beq t2, zero, search_not_found # Pular para caso erro
 	
 	lw t3, 0(t2) # t3 recebe o ID do vagao atual
-	beq t1, t3, search_found # Se o ID em t1 e t3 � igual, achamos
+	beq t1, t3, search_found # Se o ID em t1 e t3 é igual, achamos
 	
-	lw t2, 8(t2) # t3 recebe o proximo vagao
+	lw t2, 8(t2) # t2 recebe o proximo vagao
 	j search_loop
 	
 search_found:
@@ -137,7 +176,7 @@ search_found:
 	addi a7, zero, 1
 	ecall
 	
-	addi a0, zero, 32       # Espa�o
+	addi a0, zero, 32       # Espaço
     	addi a7, zero, 11
     	ecall
 	
