@@ -16,32 +16,81 @@ main:
 menu_options: #loop para o usuario escolher os comandos
 	addi a7, zero, 5 #le o input para selecionar o comando
 	ecall
-	add t2, zero, a0 #comando selecionado(t2)
+	add t1, zero, a0 #comando selecionado(t2)
 	
 	#switch de comandos
 	addi t0, zero, 1
-	beq t2, t0, add_start
+	beq t1, t0, add_start
 	addi t0, zero, 2
-	beq t2, t0, add_final
+	beq t1, t0, add_final
 	addi t0, zero, 3
-	beq t2, t0, rem_wagon
+	beq t1, t0, rem_wagon
 	addi t0, zero, 4
-	beq t2, t0, list_train
+	beq t1, t0, list_train
 	addi t0, zero, 5
-	beq t2, t0, search_wagon
+	beq t1, t0, search_wagon
 	addi t0, zero, 6
-	beq t2, t0, exit
+	beq t1, t0, exit
 	
 	j menu_options #se nao colocou a opcao de sair(6), volta ao menu de comandos
 	
 add_start:
+	add s2, zero, s0 #usa o registrador s2 como endereço do primeiro vagao
+	
+	addi a7, zero, 9 #alocar 12 bits de memoria para cada novo vagao (dinamico)
+	addi a0, zero, 12
+	ecall
+	
+	add t0, zero, a0 #t0 agora tem o novo vagao sem valores nos campos
+
+	addi s1, s1, 1 #incremente o contador de vagoes do trem
+	sw s1, 0(t0) #guarda o id do novo vagao
+	
+	addi a7, zero, 12 #le o tipo do novo vagao
+	ecall
+	add t1, zero, a0 
+	sb t1, 4(t0) #guarda o tipo do novo vagao
+	
+	sw s2, 8(t0) #guarda o endereco do proximo vagao
+	add s0, zero, t0 #endereco do novo primeiro vagao
+	
+	j menu_options #volta para o menu de comandos
 	
 add_final:
+	addi a7, zero, 9 #alocar 12 bits de memoria para cada novo vagao (dinamico)
+	addi a0, zero, 12
+	ecall
+	
+	add t0, zero, a0 #t0 agora tem o novo vagao sem valores nos campos
+
+	addi s1, s1, 1 #incremente o contador de vagoes do trem
+	sw s1, 0(t0) #guarda o id do novo vagao
+	
+	addi a7, zero, 12 #le o tipo do novo vagao
+	ecall
+	add t1, zero, a0 
+	sb t1, 4(t0) #guarda o tipo do novo vagao
+	
+	sw zero, 8(t0) #coloca NULL noo ponteiro do vagao
+	
+	#percorrer todo o trem ate o ultimo vagao
+	add t2, s1, -1 
+	add s2, zero, s0
+find_last_wagon:
+	beq t2, zero, last_wagon
+	add t3, zero, s2
+	lw s2, 8(t3) #ponteiro para o ultimo vagao
+	add t2, t2, -1 #decrementa o contador
+	j find_last_wagon #loop para percorrer o trem
+last_wagon: 
+	sw t0, 8(s2) #o ultimo vagao aponta para o novo vagao
+	
+	j menu_options #volta para o menu de comandos
 	
 rem_wagon:
 
 list_train:
-    add t1, zero, s0 # t1 comeca apontando para o primeiro vagão
+	add t1, zero, s0 # t1 comeca apontando para o primeiro vagão
     
 list_loop:
     beq t1, zero, menu_options # se t1 for NULL, o trem acabou e voltamos ao menus
@@ -70,22 +119,6 @@ exit:
 	# encerra o programa
 	addi a7, zero, 10
 	ecall
-	
-#"funcao" auxiliar para adicionar vagoes
-new_wagon:	
-	addi a7, zero, 9 #alocar 12 bits de memoria para cada novo vagao (dinamico)
-	addi a0, zero, 12
-	ecall
-	
-	add t0, zero, a0 #t0 agora tem o novo vagao sem valores nos campos
-
-	addi s1, s1, 1 #incremente o contador de vagoes do trem
-	sw s1, 0(t0) #guarda o id do novo vagao
-	
-	addi a7, zero, 12 #le o tipo do novo vagao
-	ecall
-	add t1, zero, a0 
-	sw t1, 4(t0) #guarda o tipo do novo vagao
 	
 
 	
