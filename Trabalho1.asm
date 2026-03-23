@@ -41,7 +41,29 @@ add_final:
 rem_wagon:
 
 list_train:
-
+    add t1, zero, s0 # t1 comeca apontando para o primeiro vagão
+    
+list_loop:
+    beq t1, zero, menu_options # se t1 for NULL, o trem acabou e voltamos ao menus
+    
+    lw a0, 0(t1) # carrega o ID (offset 0)
+    addi a7, zero, 1 # 1 imprime int
+    ecall
+    
+    addi a0, zero, 32 #ASCII para espaco
+    addi a7, zero, 11 # 11 imprime char
+    ecall
+    
+    lbu a0, 4(t1) # carrega o caractere (offset 4)
+    addi a7, zero, 11 # 11 imprime char
+    ecall
+    
+    addi a0, zero, 10       # ASCII 10 é o \n
+    addi a7, zero, 11
+    ecall
+    
+    lw t1, 8(t1) # recebe o endereço do proximo vagao (offset 8)
+    j list_loop
 search_wagon:
 
 exit:
