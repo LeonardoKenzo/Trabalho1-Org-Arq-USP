@@ -76,13 +76,13 @@ add_final:
 	sw zero, 8(t0) #coloca NULL noo ponteiro do vagao
 	
 	#percorrer todo o trem ate o ultimo vagao
-	addi t2, s1, -1 
-	add s2, zero, s0 #coloca o ponteiro do primeiro vagao da lista em s2
+	add t2, s1, -1 
+	add s2, zero, s0
 find_last_wagon:
-	beq t2, zero, last_wagon #se o contador chega ao fim, indica que e o ultimo vagao
+	beq t2, zero, last_wagon
 	add t3, zero, s2
 	lw s2, 8(t3) #ponteiro para o ultimo vagao
-	addi t2, t2, -1 #decrementa o contador
+	add t2, t2, -1 #decrementa o contador
 	j find_last_wagon #loop para percorrer o trem
 last_wagon: 
 	sw t0, 8(s2) #o ultimo vagao aponta para o novo vagao
@@ -117,17 +117,17 @@ list_loop:
     	j list_loop
 
 search_wagon:
-	add1 a7, zero, 5
+	addi a7, zero, 5
 	ecall
 	add t1, zero, a0 # Guaarda o ID que vamos procurar
 	
-	add t2, zero, s0 # Comeï¿½ar do primeiro vagao
+	add t2, zero, s0 # Começar do primeiro vagao
 	
 search_loop:
 	beq t2, zero, search_not_found # Pular para caso erro
 	
 	lw t3, 0(t2) # t3 recebe o ID do vagao atual
-	beq t1, t3, search_found # Se o ID em t1 e t3 ï¿½ igual, achamos
+	beq t1, t3, search_found # Se o ID em t1 e t3 é igual, achamos
 	
 	lw t2, 8(t2) # t3 recebe o proximo vagao
 	j search_loop
@@ -137,7 +137,7 @@ search_found:
 	addi a7, zero, 1
 	ecall
 	
-	addi a0, zero, 32       # Espaï¿½o
+	addi a0, zero, 32       # Espaço
     	addi a7, zero, 11
     	ecall
 	
