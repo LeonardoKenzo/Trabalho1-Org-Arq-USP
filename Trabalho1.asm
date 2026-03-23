@@ -114,8 +114,8 @@ list_loop:
     	lw t1, 8(t1) # recebe o endereço do proximo vagao (offset 8)
     	j list_loop
     	
-search_wagon:
 
+	ecall
 exit:
 	# encerra o programa
 	addi a7, zero, 10
