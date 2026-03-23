@@ -75,9 +75,9 @@ add_final:
 	
 	#percorrer todo o trem ate o ultimo vagao
 	addi t2, s1, -1 
-	add s2, zero, s0
+	add s2, zero, s0 #coloca o ponteiro do primeiro vagao da lista em s2
 find_last_wagon:
-	beq t2, zero, last_wagon
+	beq t2, zero, last_wagon #se o contador chega ao fim, indica que e o ultimo vagao
 	add t3, zero, s2
 	lw s2, 8(t3) #ponteiro para o ultimo vagao
 	addi t2, t2, -1 #decrementa o contador
