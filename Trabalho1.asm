@@ -8,7 +8,7 @@ first_wagon: #primeiro vagao locomotiva (12 bits)
 	
 not_found: .asciz "\nVagao nao encontrado no trem.\n"
 menu_msg:  .asciz "\n1 - Add inicio\n2 - Add final\n3 - Remover\n4 - Listar\n5 - Buscar\n6 - Sair\nOpcao: "
-welcome:   .asciz "Bem-vindo ao sistema de trens!\n"
+welcome:   .asciz "Bem-vindo ao jogo de trens!\n"
 
 	.text
 	.align 2
