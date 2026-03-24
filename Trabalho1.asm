@@ -15,7 +15,7 @@ welcome:   .asciz "Bem-vindo ao jogo de trens!\n"
 	.globl main
 main:		
 	la s0, first_wagon #endereco do primeiro vagao(s0)
-	addi s1, zero, 1 #contador de vagoes do trem (s1)
+	addi s1, zero, 1 #contador de vagoes do trem para usar no ID (s1)
 
 	la a0, welcome # mensagem de boas-vindas
 	addi a7, zero, 4
@@ -48,7 +48,7 @@ menu_options: #loop para o usuario escolher os comandos
 	j menu_options #se nao colocou a opcao de sair(6), volta ao menu de comandos
 	
 add_start:
-	add s2, zero, s0 #usa o registrador s2 como endereÃ§o do primeiro vagao
+	add s2, zero, s0 #usa o registrador s2 como endereco do primeiro vagao
 	
 	addi a7, zero, 9 #alocar 12 bits de memoria para cada novo vagao (dinamico)
 	addi a0, zero, 12
@@ -87,13 +87,11 @@ add_final:
 	sw zero, 8(t0) #coloca NULL noo ponteiro do vagao
 	
 	#percorrer todo o trem ate o ultimo vagao
-	addi t2, s1, -1 
 	add s2, zero, s0
 find_last_wagon:
-	beq t2, zero, last_wagon
-	add t3, zero, s2
-	lw s2, 8(t3) #ponteiro para o ultimo vagao
-	addi t2, t2, -1 #decrementa o contador
+	lw t3, 8(s2) #ponteiro para o ultimo vagao
+	beq t3, zero, last_wagon
+	add s2, zero, t3
 	j find_last_wagon #loop para percorrer o trem
 last_wagon: 
 	sw t0, 8(s2) #o ultimo vagao aponta para o novo vagao
@@ -180,7 +178,7 @@ search_found:
     	addi a7, zero, 11
     	ecall
 	
-	lbu a0, 4(t0)           # Tipo
+	lbu a0, 4(t2)           # Tipo
     	addi a7, zero, 11
     	ecall
     	
